@@ -1,9 +1,11 @@
 #!/bin/bash
+mkdir -p $HOME/modradio
+mkdir -p $HOME/modradio/downloaded
+cd $HOME/modradio
 tracknmb=0
 echo Welcome to Modarchive radio!
 echo commands:
 echo q: quit the program
-echo k: keep the downloaded file
 while [ true ]
 do
 keepfile=false
@@ -12,34 +14,21 @@ wget -q -nc "https://modarchive.org/index.php?request=view_random" -O rand.txt
 url=$(sed -nr '/downloads.php/ s/.*downloads.php([^"]+).*/\1/p' rand.txt)
 IFS="#" read name filename <<< "$url"
 echo Downloading $filename...
+cd ./downloaded
 wget -q "https://api.modarchive.org/downloads.php$url" -O $filename
-echo "$filename" >> ~/previoustracks.txt
+cd ..
+echo "$filename" >> $HOME/modradio/previoustracks.txt
 rm rand.txt
-openmpt123 --ui $filename
+openmpt123 --ui ./downloaded/$filename
 ((tracknmb++))
 read -t 3 -n 1 inp
 case $inp in
     q)
-        echo Quitting...
-        rm $filename
+        echo uitting...
         break
-        ;;
-    k)
-        keepfile=true
-        echo eeping file...
-        echo "Played $tracknmb track(s)"
         ;;
     *)
         echo "Played $tracknmb track(s)"
         ;;
 esac
-if [ "$keepfile" = false ]
-then
-    rm $filename
-fi
-if [ "$keepfile" = true ]
-then
-    mv $filename ~/HDD/mods/$filename
-fi
-
 done
