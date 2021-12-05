@@ -7,7 +7,6 @@ clear
 echo Welcome to Modarchive radio!
 while [ true ]
 do
-keepfile=false
 echo Getting Random MOD from Server...
 wget -q -nc "https://modarchive.org/index.php?request=view_random" -O rand.txt
 url=$(sed -nr '/downloads.php/ s/.*downloads.php([^"]+).*/\1/p' rand.txt)
